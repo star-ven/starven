@@ -35,4 +35,3 @@ Cloudflare 从 GitHub 导入时使用：
 - `RATE_LIMIT_SALT`：随机长字符串
 
 后台路径 `/admin*` 和 `/api/admin/*` 必须由 Cloudflare Access 保护，仅允许所有者邮箱。公开站点和 `/api/inquiries` 保持公开。
-
