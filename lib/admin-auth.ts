@@ -1,17 +1,20 @@
 import { env } from 'cloudflare:workers';
 import { getChatGPTUser, requireChatGPTUser } from '@/app/chatgpt-auth';
 import { isConfiguredAdmin, isSameOriginWrite, readBoundedBody } from './admin-policy.mjs';
+import { configuredAdminIdentifier } from './identity-headers.mjs';
 export function adminJson(value: unknown, status=200) {
   return Response.json(value,{status,headers:{'Cache-Control':'private, no-store','Vary':'Cookie'}});
 }
 export async function requireAdminPage(returnTo:string) {
   const user=await requireChatGPTUser(returnTo);
-  return isConfiguredAdmin(user.userId,env.ADMIN_USER_ID) ? user : null;
+  const configured= configuredAdminIdentifier(user.provider,env);
+  return isConfiguredAdmin(user.userId,configured) ? user : null;
 }
 export async function requireAdminRequest() {
   const user=await getChatGPTUser();
   if(!user) return adminJson({error:'请先登录。'},401);
-  if(!isConfiguredAdmin(user.userId,env.ADMIN_USER_ID)) return adminJson({error:'仅网站所有者可访问。'},403);
+  const configured= configuredAdminIdentifier(user.provider,env);
+  if(!isConfiguredAdmin(user.userId,configured)) return adminJson({error:'仅网站所有者可访问。'},403);
   return null;
 }
 export function requireSameOrigin(request:Request) {

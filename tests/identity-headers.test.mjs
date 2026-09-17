@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { readAuthenticatedIdentity } from "../lib/identity-headers.mjs";
+import {
+  configuredAdminIdentifier,
+  readAuthenticatedIdentity,
+} from "../lib/identity-headers.mjs";
 
 test("reads the original Sites identity headers", () => {
   const identity = readAuthenticatedIdentity(
@@ -45,4 +48,17 @@ test("does not accept untrusted visitor headers", () => {
   );
 
   assert.equal(identity, null);
+});
+
+test("selects the provider-specific configured administrator identifier", () => {
+  const environment = {
+    ADMIN_USER_ID: "sites-owner-id",
+    ADMIN_CONTACT_EMAIL: "owner@example.com",
+  };
+
+  assert.equal(configuredAdminIdentifier("sites", environment), "sites-owner-id");
+  assert.equal(
+    configuredAdminIdentifier("cloudflare-access", environment),
+    "owner@example.com",
+  );
 });
