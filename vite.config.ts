@@ -8,6 +8,8 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
 
 const { d1, r2 } = hostingConfig;
+const cloudflareDeployment = process.env.CLOUDFLARE_DEPLOYMENT === "1";
+const cloudflareR2BucketName = process.env.CLOUDFLARE_R2_BUCKET_NAME;
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
@@ -29,12 +31,11 @@ const localBindingConfig = {
         },
       ]
     : [],
-  r2_buckets: r2
+  r2_buckets: r2 && (!cloudflareDeployment || cloudflareR2BucketName)
     ? [
         {
           binding: r2,
-          bucket_name:
-            process.env.CLOUDFLARE_R2_BUCKET_NAME ?? "starven-media",
+          bucket_name: cloudflareR2BucketName ?? "starven-media",
         },
       ]
     : [],

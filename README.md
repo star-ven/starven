@@ -26,7 +26,8 @@ Cloudflare 从 GitHub 导入时使用：
 
 - `CLOUDFLARE_D1_DATABASE_ID`：`starven-db` 的 D1 UUID
 - `CLOUDFLARE_D1_DATABASE_NAME=starven-db`
-- `CLOUDFLARE_R2_BUCKET_NAME=starven-media`
+- `CLOUDFLARE_DEPLOYMENT=1`
+- `CLOUDFLARE_R2_BUCKET_NAME=starven-media`（启用 R2 后添加；未添加时仅关闭后台图片上传）
 
 运行时密钥只在 Cloudflare 控制台设置，不提交到 GitHub：
 
